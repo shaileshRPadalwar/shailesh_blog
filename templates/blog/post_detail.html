@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends 'blog/base.html' %}
+<html lang="en">
+{% block title %}  SHAILESH'S BLOG {% endblock %}
+
+<div class="container">
+<h1> SHAILESH'S Blog </h1>
+{% block content %}
+
+    <h1>{{post.title}} .....</h1>
+    <div class="container">
+    {{ post.body }}<br><br><br><br><br>
+</div>
+    <a href="/mail/{{post.id}}" class="btn btn-primary">SHARE INFO BY MAIL</a>
+    
+    <br><br><br>
+
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+        {{ cform.as_p }}
+        <input type="submit" value="Add Comment">
+        </form>
+    </div>
+
+    <h1>.... comments.... </h1>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+           <h1>  {{ post.comments.count }} comment{{post.comments.count|pluralize}}</h1>
+    {% for comment in comments%}
+    
+    {{ comment.name }} &nbsp&nbsp&nbsp
+    {{ comment.created }}&nbsp&nbsp <br>
+    <p> comment : {{ comment.body }}</p><br><br><br>
+     {% endfor %}
+    </div>
+    {{ post.comments.count }}
+    </div>
+    {% endblock %}
+    
+</div>
+</body>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+</html>
