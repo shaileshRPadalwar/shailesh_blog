@@ -12,14 +12,16 @@
 </head>
 <body>
     <div class="content">
-    {% block content %}                                                                                                                                                                                                                                                                                                                                         
+        <div class="sidebar">
+            <h2> SHAILESH'S BLOG </h2>
+            <p> Here You can see My Python Updations.....</p>
+            
+        </div>  
+    {% block content %} 
+                                                                                                                                                                                                                                                                                                                                          
      {% endblock %}
     </div>
-    <div class="sidebar">
-        <h2> SHAILESH'S BLOG </h2>
-        <p> Here You can see My Python Updations.....</p>
-        
-    </div>
+    
 
     {% block body %}
     {% endblock %}

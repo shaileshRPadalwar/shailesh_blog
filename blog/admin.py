@@ -10,6 +10,7 @@ class PostAdmin(admin.ModelAdmin):
     ordering=['status','publish']
     prepopulated_fields={'slug':('title',)}
 admin.site.register(Post,PostAdmin)
+
 class CommentAdmin(admin.ModelAdmin):
     list_display=['post','name','email','created','updated','body','active'] 
     list_filter=['active','created','updated']
