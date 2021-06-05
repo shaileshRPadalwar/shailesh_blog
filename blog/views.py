@@ -4,28 +4,33 @@ from blog.forms import EmailForm,CommentForm
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from django.core.mail import send_mail
 from taggit.models import Tag
+from django.db.models import Count
 #Create your views here.
-def post_list_view(request,tag_slug=None):
-    post_list=Post.objects.all()
+def post_list_view(request, tag_slug=None):
+    post_list = Post.objects.all()
     tag=None
     if tag_slug:
-        tag=get_object_or_404(Tag,slug=tag_slug)
-        post_list=post_list.filter(tag__in=[tag])
-        
-    paginator=Paginator(post_list,2)
-    page_number=request.GET.get('page')
+        tag=get_object_or_404(Tag, slug=tag_slug)
+        post_list=post_list.filter(tags__in=[tag])
+
+    paginator = Paginator(post_list,2)
+    page_number = request.GET.get('page')
     try:
         post_list=paginator.page(page_number)
-        #print(post_list)
     except PageNotAnInteger:
         post_list=paginator.page(1)
     except EmptyPage:
         post_list=paginator.page(paginator.num_pages)
-    return render(request,'blog/post_list.html',{'post_list':post_list})
+    return render(request, 'blog/post_list.html', {'post_list': post_list, 'tag':tag})
 
 def post_detail(request,slug):
     post=Post.objects.get(slug=slug)
+    post_tags_ids=post.tags.values_list('id',flat=True)
+    
+    similar_posts=Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts=similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags','publish')[:4]
     comments=post.comments.filter(active=True)
+
    # print(comments[0])
     cform=CommentForm()
     if request.method=='POST':
@@ -35,7 +40,7 @@ def post_detail(request,slug):
             new_comment.post=post
             new_comment.save()
 
-    return render(request,'blog/post_detail.html',{ 'post': post,'comments':comments,'cform':cform })
+    return render(request,'blog/post_detail.html',{ 'post': post,'comments':comments,'cform':cform ,'similar_posts':similar_posts})
     
 from django.views.generic import View,ListView
 class PostListView(ListView):
@@ -55,22 +60,3 @@ def mail_send_view(request,id):
             receiver=[cd['to']]
             send_mail(subject,msg,sender,receiver,fail_silently=False)
     return render(request,'blog/sharebymail.html',{'form':form})
-
-
-
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-

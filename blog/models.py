@@ -9,6 +9,7 @@ from taggit.managers import TaggableManager
 class CustomManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status='published')
+
 # Create your models here.
 class Post(models.Model):
     STATUS_CHOICES=(('draft','Draft'),('published','Published'))
@@ -21,7 +22,7 @@ class Post(models.Model):
     updated=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=10,choices=STATUS_CHOICES,default='draft')
     objects=CustomManager()
-    tags=TaggableManager()  #For search engine Optimization # For easy navigation to the end user
+    tags=TaggableManager()   #For search engine Optimization # For easy navigation to the end user
 
     class Meta:
         ordering=('-publish',)
@@ -44,11 +45,4 @@ class Comment(models.Model):
         ordering=('-created',)
     def __str__(self):
         return 'commented By {} on {}'.format(self.name,self.post)
-
-
-
-
-
-
-
 
